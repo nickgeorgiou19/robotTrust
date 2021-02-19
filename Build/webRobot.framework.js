@@ -1297,7 +1297,7 @@ function _emscripten_asm_const_ii(code, a0) {
  return ASM_CONSTS[code](a0);
 }
 STATIC_BASE = GLOBAL_BASE;
-STATICTOP = STATIC_BASE + 2647888;
+STATICTOP = STATIC_BASE + 2615008;
 __ATINIT__.push({
  func: (function() {
   __GLOBAL__sub_I_AccessibilityScriptingClasses_cpp();
@@ -3235,7 +3235,7 @@ __ATINIT__.push({
   ___emscripten_environ_constructor();
  })
 });
-var STATIC_BUMP = 2647888;
+var STATIC_BUMP = 2615008;
 Module["STATIC_BASE"] = STATIC_BASE;
 Module["STATIC_BUMP"] = STATIC_BUMP;
 var tempDoublePtr = STATICTOP;
@@ -3694,104 +3694,6 @@ function _JS_Video_UpdateToTexture(video, tex) {
 }
 function _JS_Video_Width(video) {
  return videoInstances[video].videoWidth;
-}
-var wr = {
- requestInstances: {},
- nextRequestId: 1
-};
-function _JS_WebRequest_Abort(request) {
- wr.requestInstances[request].abort();
-}
-function _JS_WebRequest_Create(url, method) {
- var _url = Pointer_stringify(url);
- var _method = Pointer_stringify(method);
- var http = Module.companyName && Module.productName && Module.XMLHttpRequest ? new Module.XMLHttpRequest({
-  companyName: Module.companyName,
-  productName: Module.productName,
-  cacheControl: Module.cacheControl(_url)
- }) : new XMLHttpRequest;
- http.open(_method, _url, true);
- http.responseType = "arraybuffer";
- wr.requestInstances[wr.nextRequestId] = http;
- return wr.nextRequestId++;
-}
-function _JS_WebRequest_GetResponseHeaders(request, buffer, bufferSize) {
- var headers = wr.requestInstances[request].getAllResponseHeaders();
- if (buffer) stringToUTF8(headers, buffer, bufferSize);
- return lengthBytesUTF8(headers);
-}
-function _JS_WebRequest_Release(request) {
- var http = wr.requestInstances[request];
- http.onload = null;
- http.onerror = null;
- http.ontimeout = null;
- http.onabort = null;
- delete http;
- wr.requestInstances[request] = null;
-}
-function _JS_WebRequest_Send(request, ptr, length) {
- var http = wr.requestInstances[request];
- try {
-  if (length > 0) {
-   var postData = HEAPU8.subarray(ptr, ptr + length);
-   http.send(postData);
-  } else http.send();
- } catch (e) {
-  console.error(e.name + ": " + e.message);
- }
-}
-function _JS_WebRequest_SetProgressHandler(request, arg, onprogress) {
- var http = wr.requestInstances[request];
- http.onprogress = function http_onprogress(e) {
-  if (onprogress) {
-   if (e.lengthComputable) dynCall("viii", onprogress, [ arg, e.loaded, e.total ]);
-  }
- };
-}
-function _JS_WebRequest_SetRequestHeader(request, header, value) {
- var _header = Pointer_stringify(header);
- var _value = Pointer_stringify(value);
- wr.requestInstances[request].setRequestHeader(_header, _value);
-}
-function _JS_WebRequest_SetResponseHandler(request, arg, onresponse) {
- var http = wr.requestInstances[request];
- http.onload = function http_onload(e) {
-  if (onresponse) {
-   var kWebRequestOK = 0;
-   var byteArray = new Uint8Array(http.response);
-   if (byteArray.length != 0) {
-    var buffer = _malloc(byteArray.length);
-    HEAPU8.set(byteArray, buffer);
-    dynCall("viiiiii", onresponse, [ arg, http.status, buffer, byteArray.length, 0, kWebRequestOK ]);
-   } else {
-    dynCall("viiiiii", onresponse, [ arg, http.status, 0, 0, 0, kWebRequestOK ]);
-   }
-  }
- };
- function HandleError(err, code) {
-  if (onresponse) {
-   var len = lengthBytesUTF8(err) + 1;
-   var buffer = _malloc(len);
-   stringToUTF8(err, buffer, len);
-   dynCall("viiiiii", onresponse, [ arg, http.status, 0, 0, buffer, code ]);
-   _free(buffer);
-  }
- }
- http.onerror = function http_onerror(e) {
-  var kWebErrorUnknown = 2;
-  HandleError("Unknown error.", kWebErrorUnknown);
- };
- http.ontimeout = function http_onerror(e) {
-  var kWebErrorTimeout = 14;
-  HandleError("Connection timed out.", kWebErrorTimeout);
- };
- http.onabort = function http_onerror(e) {
-  var kWebErrorAborted = 17;
-  HandleError("Aborted.", kWebErrorAborted);
- };
-}
-function _JS_WebRequest_SetTimeout(request, timeout) {
- wr.requestInstances[request].timeout = timeout;
 }
 function ___atomic_compare_exchange_8(ptr, expected, desiredl, desiredh, weak, success_memmodel, failure_memmodel) {
  var pl = HEAP32[ptr >> 2];
@@ -11224,13 +11126,6 @@ function _emscripten_log(flags, varargs) {
  }
  _emscripten_log_js(flags, str);
 }
-function _longjmp(env, value) {
- Module["setThrew"](env, value || 1);
- throw "longjmp";
-}
-function _emscripten_longjmp(env, value) {
- _longjmp(env, value);
-}
 function _emscripten_num_logical_cores() {
  return 1;
 }
@@ -15512,8 +15407,8 @@ function nullFunc_vjji(x) {
  err("Build with ASSERTIONS=2 for more info.");
  abort(x);
 }
-Module["wasmTableSize"] = 56007;
-Module["wasmMaxTableSize"] = 56007;
+Module["wasmTableSize"] = 56005;
+Module["wasmMaxTableSize"] = 56005;
 function invoke_dddi(index, a1, a2, a3) {
  var sp = stackSave();
  try {
@@ -18548,15 +18443,6 @@ Module.asmLibraryArg = {
  "_JS_Video_Time": _JS_Video_Time,
  "_JS_Video_UpdateToTexture": _JS_Video_UpdateToTexture,
  "_JS_Video_Width": _JS_Video_Width,
- "_JS_WebRequest_Abort": _JS_WebRequest_Abort,
- "_JS_WebRequest_Create": _JS_WebRequest_Create,
- "_JS_WebRequest_GetResponseHeaders": _JS_WebRequest_GetResponseHeaders,
- "_JS_WebRequest_Release": _JS_WebRequest_Release,
- "_JS_WebRequest_Send": _JS_WebRequest_Send,
- "_JS_WebRequest_SetProgressHandler": _JS_WebRequest_SetProgressHandler,
- "_JS_WebRequest_SetRequestHeader": _JS_WebRequest_SetRequestHeader,
- "_JS_WebRequest_SetResponseHandler": _JS_WebRequest_SetResponseHandler,
- "_JS_WebRequest_SetTimeout": _JS_WebRequest_SetTimeout,
  "__ZSt18uncaught_exceptionv": __ZSt18uncaught_exceptionv,
  "___atomic_compare_exchange_8": ___atomic_compare_exchange_8,
  "___atomic_fetch_add_8": ___atomic_fetch_add_8,
@@ -18657,7 +18543,6 @@ Module.asmLibraryArg = {
  "_emscripten_is_webgl_context_lost": _emscripten_is_webgl_context_lost,
  "_emscripten_log": _emscripten_log,
  "_emscripten_log_js": _emscripten_log_js,
- "_emscripten_longjmp": _emscripten_longjmp,
  "_emscripten_memcpy_big": _emscripten_memcpy_big,
  "_emscripten_num_logical_cores": _emscripten_num_logical_cores,
  "_emscripten_request_fullscreen": _emscripten_request_fullscreen,
@@ -18884,7 +18769,6 @@ Module.asmLibraryArg = {
  "_llvm_trunc_f32": _llvm_trunc_f32,
  "_localtime": _localtime,
  "_localtime_r": _localtime_r,
- "_longjmp": _longjmp,
  "_mktime": _mktime,
  "_nanosleep": _nanosleep,
  "_pthread_cond_destroy": _pthread_cond_destroy,
@@ -22040,12 +21924,6 @@ asm["_realloc"] = (function() {
  assert(!runtimeExited, "the runtime was exited (use NO_EXIT_RUNTIME to keep it alive after main() exits)");
  return real__realloc.apply(null, arguments);
 });
-var real__saveSetjmp = asm["_saveSetjmp"];
-asm["_saveSetjmp"] = (function() {
- assert(runtimeInitialized, "you need to wait for the runtime to be ready (e.g. wait for main() to be called)");
- assert(!runtimeExited, "the runtime was exited (use NO_EXIT_RUNTIME to keep it alive after main() exits)");
- return real__saveSetjmp.apply(null, arguments);
-});
 var real__sbrk = asm["_sbrk"];
 asm["_sbrk"] = (function() {
  assert(runtimeInitialized, "you need to wait for the runtime to be ready (e.g. wait for main() to be called)");
@@ -22057,12 +21935,6 @@ asm["_strlen"] = (function() {
  assert(runtimeInitialized, "you need to wait for the runtime to be ready (e.g. wait for main() to be called)");
  assert(!runtimeExited, "the runtime was exited (use NO_EXIT_RUNTIME to keep it alive after main() exits)");
  return real__strlen.apply(null, arguments);
-});
-var real__testSetjmp = asm["_testSetjmp"];
-asm["_testSetjmp"] = (function() {
- assert(runtimeInitialized, "you need to wait for the runtime to be ready (e.g. wait for main() to be called)");
- assert(!runtimeExited, "the runtime was exited (use NO_EXIT_RUNTIME to keep it alive after main() exits)");
- return real__testSetjmp.apply(null, arguments);
 });
 var real_establishStackSpace = asm["establishStackSpace"];
 asm["establishStackSpace"] = (function() {
@@ -24712,11 +24584,6 @@ var _realloc = Module["_realloc"] = (function() {
  assert(!runtimeExited, "the runtime was exited (use NO_EXIT_RUNTIME to keep it alive after main() exits)");
  return Module["asm"]["_realloc"].apply(null, arguments);
 });
-var _saveSetjmp = Module["_saveSetjmp"] = (function() {
- assert(runtimeInitialized, "you need to wait for the runtime to be ready (e.g. wait for main() to be called)");
- assert(!runtimeExited, "the runtime was exited (use NO_EXIT_RUNTIME to keep it alive after main() exits)");
- return Module["asm"]["_saveSetjmp"].apply(null, arguments);
-});
 var _sbrk = Module["_sbrk"] = (function() {
  assert(runtimeInitialized, "you need to wait for the runtime to be ready (e.g. wait for main() to be called)");
  assert(!runtimeExited, "the runtime was exited (use NO_EXIT_RUNTIME to keep it alive after main() exits)");
@@ -24726,11 +24593,6 @@ var _strlen = Module["_strlen"] = (function() {
  assert(runtimeInitialized, "you need to wait for the runtime to be ready (e.g. wait for main() to be called)");
  assert(!runtimeExited, "the runtime was exited (use NO_EXIT_RUNTIME to keep it alive after main() exits)");
  return Module["asm"]["_strlen"].apply(null, arguments);
-});
-var _testSetjmp = Module["_testSetjmp"] = (function() {
- assert(runtimeInitialized, "you need to wait for the runtime to be ready (e.g. wait for main() to be called)");
- assert(!runtimeExited, "the runtime was exited (use NO_EXIT_RUNTIME to keep it alive after main() exits)");
- return Module["asm"]["_testSetjmp"].apply(null, arguments);
 });
 var establishStackSpace = Module["establishStackSpace"] = (function() {
  assert(runtimeInitialized, "you need to wait for the runtime to be ready (e.g. wait for main() to be called)");
